@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Collection;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\{Consultation, Patient, MedicalAppointment, CashRegister};
+use App\Models\{Consultation, Patient, MedicalAppointment, CashRegister, Payment};
 
 
 class Index extends Component
@@ -22,23 +22,38 @@ class Index extends Component
         //--------------------//
         // estadisticas por sexo
         // consultas por dia
-        // 
+        // total de creditos (deudas)
 
         
         $patientsTotal = Patient::count();
         $appointmentsToday = MedicalAppointment::
-                                    where('date', '2022-04-05')
+                                    where('date', today())
                                     ->count();
 
         $consultationsToday = Consultation::
                                 whereDate('created_at', '=', '2022-04-05')
                                 ->count();
-        $cashStartDate = Carbon::createFromFormat('Y-m-d', '2022-04-03');
-        $cashEndDate = Carbon::createFromFormat('Y-m-d', '2022-04-05');
 
-        $cashSaldoTotal = CashRegister::
-                        whereBetween('date', [$cashStartDate, $cashEndDate])
+
+        // $cashStartDate = Carbon::createFromFormat('Y-m-d', '2022-04-03');
+        // $cashEndDate = Carbon::createFromFormat('Y-m-d', '2022-04-05');
+
+        $dateCash = CashRegister::select('date')->get();
+        $creditTotal = CashRegister::
+                        whereBetween('date', [$dateCash->min()->date, $dateCash->max()->date])
                         ->sum('credit');
+        $expensesTotal = CashRegister::
+                        whereBetween('date', [$dateCash->min()->date, $dateCash->max()->date])
+                        ->sum('expenses');
+
+
+
+       $datePayment = Payment::select('date')->get();
+       $creditPatientsTotal = Payment::
+                        whereBetween('date', [$datePayment->min()->date, $datePayment->max()->date])
+                        ->sum('credit');
+
+
                         //->dd();
 // Aeronave::join('usuarios', 'usuarios.id', '=', 'aeronaves.id_users')
 // ->where('usuarios.nombre', 'like', "%{$query}%")
@@ -54,12 +69,11 @@ class Index extends Component
                     ->join('consultations', 'consultations.patient_id', 'patients.id')
                     ->where('consultations.created_at', 'like', '2022-04-07%')
                     ->get();
-
         $collection = collect($sexStats);
-        $count = $sexStats->countBy(function ($item) {
+        $sexCount = $sexStats->countBy(function ($item) {
             return $item['sex'];
         });
 
-        return view('livewire.index', ['patientsTotal' => $patientsTotal, 'appointmentsToday' => $appointmentsToday, 'consultationsToday' => $consultationsToday, 'cashSaldoTotal' => $cashSaldoTotal, 'sexStats' => $count]);
+        return view('livewire.index', ['patientsTotal' => $patientsTotal, 'appointmentsToday' => $appointmentsToday, 'consultationsToday' => $consultationsToday, 'creditTotal' => $creditTotal, 'expensesTotal' => $expensesTotal, 'creditPatientsTotal' => $creditPatientsTotal, 'sexStats' => $sexCount]);
     }
 }

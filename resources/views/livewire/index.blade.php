@@ -1,8 +1,11 @@
 <div>
-  {{ $patientsTotal }}
-  {{ $appointmentsToday }}
-  {{ $consultationsToday }}
-  {{ $cashSaldoTotal }}
-  {{ $sexStats }}
+  
+{{ $patientsTotal }}
+{{ $appointmentsToday }}
+{{ $consultationsToday }}
+{{ $creditTotal }}
+{{ $expensesTotal }}
+{{ $creditPatientsTotal }}
+{{ $sexStats }}
 
 </div>

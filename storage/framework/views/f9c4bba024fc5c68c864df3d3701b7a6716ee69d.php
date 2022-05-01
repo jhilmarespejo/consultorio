@@ -1,13 +1,18 @@
 <div>
-  <?php echo e($patientsTotal); ?>
+  
+<?php echo e($patientsTotal); ?>
 
-  <?php echo e($appointmentsToday); ?>
+<?php echo e($appointmentsToday); ?>
 
-  <?php echo e($consultationsToday); ?>
+<?php echo e($consultationsToday); ?>
 
-  <?php echo e($cashSaldoTotal); ?>
+<?php echo e($creditTotal); ?>
 
-  <?php echo e($sexStats); ?>
+<?php echo e($expensesTotal); ?>
+
+<?php echo e($creditPatientsTotal); ?>
+
+<?php echo e($sexStats); ?>
 
 
 </div>
